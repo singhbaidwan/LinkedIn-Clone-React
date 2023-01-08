@@ -62,7 +62,7 @@ const Container = styled.div`
   padding: 0px;
 `;
 const Nav = styled.nav`
-  max-width: 1128px;
+  /* max-width: 900px; */
   margin: auto;
   padding: 12px 0 16px;
   display: flex;
@@ -119,7 +119,8 @@ const Section = styled.section`
   position: relative;
   flex-wrap: wrap;
   width: 100%;
-  max-width: 1128px;
+  /* max-width: 1000px; */
+  /* max-width: 100%; */
   align-items: center;
   margin: auto;
   @media (max-width: 768px) {
