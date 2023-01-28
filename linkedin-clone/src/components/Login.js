@@ -2,10 +2,11 @@ import styled from "styled-components";
 import React from "react";
 import { connect } from "react-redux";
 import { signInAPI } from "../actions";
-
+import { Navigate } from "react-router-dom";
 function Login(props) {
   return (
     <Container>
+      {props.user && <Navigate replace to="/home" />}
       <Nav>
         <a href="/">
           <img src="/images/login-logo.svg" alt="" />
@@ -160,7 +161,9 @@ const Google = styled.button`
 `;
 
 const mapStateToProps = (state) => {
-  return {};
+  return {
+    user: state.userState.user,
+  };
 };
 
 // the signINApi method got connected to sign in that we are passing as props in above login
