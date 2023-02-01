@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import PostModel from "./PostModel";
 
 function Main() {
   return (
@@ -84,6 +85,7 @@ function Main() {
           </SocialActions>
         </Article>
       </div>
+      <PostModel />
     </Container>
   );
 }
