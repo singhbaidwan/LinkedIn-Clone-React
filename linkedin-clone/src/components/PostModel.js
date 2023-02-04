@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { useState } from "react";
 import ReactPlayer from "react-player";
 import { connect } from "react-redux";
+import firebase from "firebase/compat/app";
+import { postArticleAPI } from "../actions";
 
 function PostModel(props) {
   const [editorText, setEditorText] = useState("");
@@ -24,6 +26,27 @@ function PostModel(props) {
     setShareImage("");
     setVideoLink("");
     setAssestArea(area);
+  };
+
+  const postArticle = (e) => {
+    e.preventDefault();
+    console.log(1);
+    if (e.target !== e.currentTarget) {
+      return;
+    }
+
+    console.log(2);
+    const payload = {
+      image: shareImage,
+      video: videoLink,
+      user: props.user,
+      description: editorText,
+      timestamp: "",
+    };
+
+    console.log(3);
+    props.postArticle(payload);
+    reset(e);
   };
 
   const reset = (e) => {
@@ -112,7 +135,10 @@ function PostModel(props) {
                   Anyone
                 </AssestButton>
               </ShareComment>
-              <PostButton disabled={!editorText ? true : false}>
+              <PostButton
+                disabled={!editorText ? true : false}
+                onClick={(event) => postArticle(event)}
+              >
                 Post
               </PostButton>
             </ShareCreations>
@@ -281,6 +307,8 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => ({});
+const mapDispatchToProps = (dispatch) => ({
+  postArticle: (payload) => dispatch(postArticleAPI(payload)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(PostModel);
