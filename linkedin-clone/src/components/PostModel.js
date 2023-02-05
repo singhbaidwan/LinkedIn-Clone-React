@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import ReactPlayer from "react-player";
 import { connect } from "react-redux";
-import firebase from "firebase/compat/app";
+import { serverTimestamp } from "firebase/firestore";
 import { postArticleAPI } from "../actions";
 
 function PostModel(props) {
@@ -41,7 +41,7 @@ function PostModel(props) {
       video: videoLink,
       user: props.user,
       description: editorText,
-      timestamp: "",
+      timestamp: serverTimestamp(),
     };
 
     console.log(3);

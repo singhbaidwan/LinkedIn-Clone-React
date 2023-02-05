@@ -1,5 +1,7 @@
 import { auth, provider, signInWithPopup, storage, db } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { collection, addDoc } from "firebase/firestore";
+
 import { SET_USER } from "./actionType";
 
 const setUser = (payload) => ({
@@ -66,9 +68,21 @@ export function postArticleAPI(payload) {
         },
         (error) => console.log(error.code),
         async () => {
-          getDownloadURL(upload.snapshot.ref).then((downloadURL) => {
+          getDownloadURL(upload.snapshot.ref).then(async (downloadURL) => {
             console.log("File available at", downloadURL);
-            db.collection("articles").add({
+            // db.collection("articles").add({
+            //   actor: {
+            //     description: payload.user.email,
+            //     title: payload.user.displayName,
+            //     date: payload.timestamp,
+            //     image: payload.user.photoURL,
+            //   },
+            //   video: payload.video,
+            //   sharedImg: downloadURL,
+            //   comments: 0,
+            //   description: payload.description,
+            // });
+            const docRef = await addDoc(collection(db, "articles"), {
               actor: {
                 description: payload.user.email,
                 title: payload.user.displayName,
@@ -80,6 +94,7 @@ export function postArticleAPI(payload) {
               comments: 0,
               description: payload.description,
             });
+            console.log("Document written with ID: ", docRef.id);
           });
           // const downloadURL = await upload.snapshot.ref.getDownloadURL();
         }
