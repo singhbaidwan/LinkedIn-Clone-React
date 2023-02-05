@@ -1,11 +1,17 @@
 import React from "react";
 import styled from "styled-components";
 import PostModel from "./PostModel";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { connect } from "react-redux";
+import { getArticlesAPI } from "../actions";
 
-function Main() {
+function Main(props) {
   const [showModal, setShowModal] = useState("close");
 
+  useEffect(() => {
+    console.log("inside use effectos");
+    props.getArticles();
+  }, []);
   const handleClick = (e) => {
     e.preventDefault();
     if (e.target !== e.currentTarget) {
@@ -27,10 +33,15 @@ function Main() {
   return (
     <Container>
       <ShareBox>
-        Share
         <div>
-          <img src="/images/user.svg" alt="" />
-          <button onClick={handleClick}>Start a Post </button>
+          {props.user && props.user.photoURL ? (
+            <img src={props.user.photoURL} />
+          ) : (
+            <img src="/images/user.svg" alt="" />
+          )}
+          <button onClick={handleClick} disabled={props.loading ? true : false}>
+            Start a Post{" "}
+          </button>
         </div>
         <div>
           <button>
@@ -52,7 +63,9 @@ function Main() {
           </button>
         </div>
       </ShareBox>
-      <div>
+      <Content>
+        {props.loading && <img src="./images/spin-loader.svg" />}
+
         <Article>
           <SharedActor>
             <a>
@@ -105,7 +118,7 @@ function Main() {
             </button>
           </SocialActions>
         </Article>
-      </div>
+      </Content>
       <PostModel showModal={showModal} handleClick={handleClick} />
     </Container>
   );
@@ -298,4 +311,21 @@ const SocialActions = styled.div`
     }
   }
 `;
-export default Main;
+const Content = styled.div`
+  text-align: center;
+  & > img {
+    width: 30px;
+  }
+`;
+
+const mapStateToProps = (state) => {
+  return {
+    loading: state.articleState.loading,
+    user: state.userState.user,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  getArticles: () => dispatch(getArticlesAPI()),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

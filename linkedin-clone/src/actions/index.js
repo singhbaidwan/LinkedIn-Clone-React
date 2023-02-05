@@ -1,12 +1,23 @@
 import { auth, provider, signInWithPopup, storage, db } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { collection, addDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  getDocs,
+} from "firebase/firestore";
 
 import { SET_USER, SET_LOADING_STATUS } from "./actionType";
 
 const setUser = (payload) => ({
   type: SET_USER,
   user: payload,
+});
+
+export const setLoading = (status) => ({
+  type: SET_LOADING_STATUS,
+  status: status,
 });
 export function signInAPI() {
   return (dispatch) => {
@@ -46,6 +57,7 @@ export function postArticleAPI(payload) {
   return (dispatch) => {
     console.log(4);
     if (payload.image !== "") {
+      dispatch(setLoading(true));
       console.log(5);
 
       const storageRef = ref(storage, `images/${payload.image.name}`);
@@ -95,6 +107,7 @@ export function postArticleAPI(payload) {
               description: payload.description,
             });
             console.log("Document written with ID: ", docRef.id);
+            dispatch(setLoading(false));
           });
           // const downloadURL = await upload.snapshot.ref.getDownloadURL();
         }
@@ -114,8 +127,35 @@ export function postArticleAPI(payload) {
           description: payload.description,
         });
         console.log("Document written with ID: ", docRef.id);
+        dispatch(setLoading(false));
       };
       addVideo();
     }
+  };
+}
+
+export function getArticlesAPI() {
+  return (dispatch) => {
+    let payload = [];
+    console.log("enterred get articles api");
+    // db.collection("articles")
+    //   .orderBy("actor.date", "desc")
+    //   .onSnapshot((snapshot) => {
+    //     console.log("read the /....:");
+    //     payload = snapshot.docs.map((doc) => doc.data());
+    //     console.log(payload);
+    //   });
+    const fetchData = async () => {
+      const q = query(
+        collection(db, "articles"),
+        orderBy("actor.date", "desc")
+      );
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((data) => {
+        payload = [...payload, data.data()];
+      });
+      console.log(payload);
+    };
+    fetchData();
   };
 }
