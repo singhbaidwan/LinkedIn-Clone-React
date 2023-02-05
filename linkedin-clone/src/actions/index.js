@@ -2,7 +2,7 @@ import { auth, provider, signInWithPopup, storage, db } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
 
-import { SET_USER } from "./actionType";
+import { SET_USER, SET_LOADING_STATUS } from "./actionType";
 
 const setUser = (payload) => ({
   type: SET_USER,
@@ -99,6 +99,23 @@ export function postArticleAPI(payload) {
           // const downloadURL = await upload.snapshot.ref.getDownloadURL();
         }
       );
+    } else if (payload.video) {
+      const addVideo = async () => {
+        const docRef = await addDoc(collection(db, "articles"), {
+          actor: {
+            description: payload.user.email,
+            title: payload.user.displayName,
+            date: payload.timestamp,
+            image: payload.user.photoURL,
+          },
+          video: payload.video,
+          sharedImg: "",
+          comments: 0,
+          description: payload.description,
+        });
+        console.log("Document written with ID: ", docRef.id);
+      };
+      addVideo();
     }
   };
 }
