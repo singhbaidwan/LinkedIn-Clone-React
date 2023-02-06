@@ -8,7 +8,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 
-import { SET_USER, SET_LOADING_STATUS } from "./actionType";
+import { SET_USER, SET_LOADING_STATUS, GET_ARTCILES } from "./actionType";
 
 const setUser = (payload) => ({
   type: SET_USER,
@@ -18,6 +18,11 @@ const setUser = (payload) => ({
 export const setLoading = (status) => ({
   type: SET_LOADING_STATUS,
   status: status,
+});
+
+export const getArticles = (payload) => ({
+  type: GET_ARTCILES,
+  payload: payload,
 });
 export function signInAPI() {
   return (dispatch) => {
@@ -154,7 +159,8 @@ export function getArticlesAPI() {
       querySnapshot.forEach((data) => {
         payload = [...payload, data.data()];
       });
-      console.log(payload);
+      console.log("i got data passing to payload", payload);
+      dispatch(getArticles(payload));
     };
     fetchData();
   };
